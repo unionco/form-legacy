@@ -1,0 +1,89 @@
+@function rem($num, $base: 16) {
+    @return ($num / $base) / 1px * 1rem;
+}
+
+@function getSide($side, $values) {
+    @if (type-of($values) != list) {
+        @return $values;
+    }
+
+    @if ($side == top) {
+        @return nth($values, 1);
+    }
+
+    @if ($side == right) {
+        @return nth($values, 2);
+    }
+
+    @if ($side == bottom) {
+        @if (length($values) == 2) {
+            @return nth($values, 1);
+        }
+        @else {
+            @return nth($values, 3);
+        }
+    }
+
+    @if ($side == left) {
+        @if (length($values) < 4) {
+            @return nth($values, 2);
+        }
+        @else {
+            @return nth($values, 4);
+        }
+    }
+}
+
+// Join multiple values to form a single value. Use calc if values have different unit types.
+@function consolidate($firstValue, $values...) {
+    $sameUnit: true;
+    $sameUnitValue: 0;
+    $diffUnitCalc: "#{$firstValue}";
+    @each $value in $values {
+        @if unit($firstValue) == unit($value) {
+            $sameUnitValue: $sameUnitValue + $value;
+        }
+        @else {
+            $sameUnit: false;
+        }
+        $diffUnitCalc: "#{$diffUnitCalc} + #{$value}";
+    }
+    @if $sameUnit {
+        @return $firstValue + $sameUnitValue;
+    }
+    @return calc(#{$diffUnitCalc});
+}
+
+// Subtracts offsets from first argument. Use calc if values have different unit types.
+@function calcInnerValue($ignorePercentage, $firstValue, $offsets...) {
+    @if $ignorePercentage {
+        @if unit($firstValue) == '%' {
+            @return $firstValue;
+        }
+    }
+
+    $sameUnit: true;
+    $sameUnitValue: 0;
+    $diffUnitCalc: "#{$firstValue}";
+    @each $value in $offsets {
+        @if unit($firstValue) == unit($value) {
+            $sameUnitValue: $sameUnitValue + $value;
+        }
+        @else {
+            $sameUnit: false;
+        }
+        $diffUnitCalc: "#{$diffUnitCalc} - #{$value}";
+    }
+    @if $sameUnit {
+        @return $firstValue - $sameUnitValue;
+    }
+    @return calc(#{$diffUnitCalc});
+}
+
+@function calcInnerRadius($firstValue, $offsets...) {
+    @return calcInnerValue(true, $firstValue, $offsets...);
+}
+
+@function calcInnerDimension($firstValue, $offsets...) {
+    @return calcInnerValue(false, $firstValue, $offsets...);
+}

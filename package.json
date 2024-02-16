@@ -1,0 +1,31 @@
+{
+  "name": "@union/form-legacy",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "node build.js",
+    "start": "node build.js --watch=1",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node postinstall.js"
+  },
+  "author": "UNION <dev@union.co> (http://union.co)",
+  "dependencies": {
+    "@union/global-legacy": "^0.1.0"
+  },
+  "devDependencies": {
+    "@union/dev-tools": "^0.1.0"
+  },
+  "main": "dist/index.js",
+  "module": "src/index.js",
+  "browserify": {
+    "transform": [
+      [
+        "babel",
+        {
+          "preset": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  }
+}

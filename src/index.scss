@@ -1,0 +1,429 @@
+@import '@union/global-legacy/src';
+@import 'scss/mixins';
+@import 'scss/variables';
+
+@include exports("@union/form-legacy") {
+    .Form {
+        width: calc(100% - #{$form-min-margin * 2});
+        @if $form-centered-by-default {
+            align-self: center;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: $form-max-width;
+        }
+
+        &-checkbox {
+            @include element-invisible;
+
+            + .Form-label {
+                color: $form-checkbox-font-color;
+                cursor: pointer;
+                display: inline-block;
+                font-size: $form-checkbox-font-size;
+                margin-right: $form-checkbox-gutter;
+                padding-left: consolidate($form-checkbox-size, $form-checkbox-label-offset);
+                position: relative;
+                text-transform: $form-checkbox-label-transform;
+
+                &::before {
+                    background-color: $form-checkbox-background-color;
+                    border: $form-checkbox-border-width solid $form-checkbox-border-color;
+                    border-radius: $form-checkbox-border-radius;
+                    content: '';
+                    height: $form-checkbox-size;
+                    left: 0;
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    transition-duration: $form-transition-speed;
+                    transition-property: background-color, border-color, color, opacity, transform;
+                    width: $form-checkbox-size;
+                }
+
+                &::after {
+                    background: $form-checkbox-background-color;
+                    border-radius: calcInnerRadius($form-checkbox-border-radius, $form-checkbox-border-width, $form-checkbox-fill-gutter);
+                    content: "";
+                    height: calcInnerDimension($form-checkbox-size, $form-checkbox-border-width * 2, $form-checkbox-fill-gutter * 2);
+                    left: consolidate($form-checkbox-border-width, $form-checkbox-fill-gutter);
+                    opacity: 0;
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%) scale(0);
+                    transition-duration: $form-transition-speed;
+                    transition-property: background-color, border-color, color, opacity, transform;
+                    width: calcInnerDimension($form-checkbox-size, $form-checkbox-border-width * 2, $form-checkbox-fill-gutter * 2);
+                }
+            }
+
+            &[type="radio"] {
+                + .Form-label {
+                    &::before {
+                        border-radius: $form-radio-border-radius;
+                    }
+
+                    &::after {
+                        border-radius: calcInnerRadius($form-radio-border-radius, $form-checkbox-border-width, $form-checkbox-fill-gutter);
+                    }
+                }
+            }
+
+            &:hover + .Form-label,
+            &:focus + .Form-label,
+            + .Form-label:hover,
+            + .Form-label:focus {
+                color: $form-hover-label-font-color;
+
+                &::before {
+                    background-color: $form-hover-input-background-color;
+                    border-color: $form-hover-input-border-color;
+                }
+            }
+
+            &:checked {
+                + .Form-label {
+                    color: $form-valid-checkbox-font-color;
+
+                    &::before {
+                        background-color: $form-valid-checkbox-background-color;
+                        border-color: $form-valid-checkbox-border-color;
+                    }
+
+                    &::after {
+                        background-color: $form-valid-checkbox-border-color;
+                        opacity: 1;
+                        transform: translateY(-50%) scale(1);
+                    }
+                }
+            }
+
+            html.is-keyboardNav & {
+                &:focus + .Form-label,
+                + .Form-label:focus {
+                    border-radius: $form-checkbox-border-radius;
+                    outline: 2px solid $form-hover-checkbox-border-color;
+                }
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+
+                + .Form-label {
+                    color: $form-disabled-label-font-color;
+                    cursor: not-allowed;
+
+                    &::before {
+                        background-color: $form-disabled-input-background-color;
+                        border-color: $form-disabled-input-border-color;
+                    }
+
+                    &::after {
+                        opacity: 0;
+                    }
+                }
+            }
+        }
+
+        &-error {
+            background-color: $form-error-background-color;
+            color: $form-error-font-color;
+            margin-bottom: rem(15px);
+            padding-left: rem(10px);
+            width: 100%;
+        }
+
+        &-group {
+            display: block;
+            margin-bottom: $form-group-gutter;
+            position: relative;
+            z-index: $form-group-z-index;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            &[data-form-label-placeholder] {
+                .Form-input {
+                    padding: rem(24px) rem(20px) rem(10px);
+                }
+
+                .Form-label {
+                    color: $form-label-font-color;
+                    display: block;
+                    font-size: $form-label-font-size;
+                    font-weight: $form-label-font-weight;
+                    left: rem(22px);
+                    padding-left: 0;
+                    position: absolute;
+                    text-transform: none;
+                    top: rem(16px);
+                    transform-origin: top left;
+                    z-index: 1;
+                }
+
+                &.is-floating .Form-label,
+                .Form-input:focus + .Form-label {
+                    transform: translateY(-12px) scale(0.75, 0.75);
+                }
+            }
+        }
+
+        &-input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: $form-input-background-color;
+            border: $form-input-border-width solid $form-input-border-color;
+            border-radius: $form-input-border-radius;
+            @if ($form-input-border-side-override) {
+                border-#{nth($form-input-border-side-override, 1)}: nth($form-input-border-side-override, 2);
+            }
+            color: $form-input-font-color;
+            display: block;
+            font-family: $form-input-font-family;
+            font-size: $form-input-font-size;
+            font-weight: $form-input-font-weight;
+            line-height: $form-input-line-height;
+            padding: $form-input-padding;
+            transition-duration: $form-transition-speed;
+            transition-property: background-color, border-color, color, opacity, transform;
+            width: 100%;
+
+            @if ($form-has-required-star) {
+                &[required] ~ .Form-label::after {
+                    color: $form-required-star-color;
+                    content: ' *';
+                }
+            }
+
+            @at-root {
+                select#{&}.is-initialized {
+                    border: 0;
+                    bottom: 0;
+                    cursor: pointer;
+                    left: 0;
+                    opacity: 0;
+                    position: absolute;
+                    top: 0;
+                    z-index: 1;
+                }
+
+                textarea#{&} {
+                    height: $form-textarea-height;
+                    resize: none;
+                }
+            }
+
+            @include hover {
+                background-color: $form-hover-input-background-color;
+                border-color: $form-hover-input-border-color;
+                color: $form-hover-input-font-color;
+
+                ~ .Form-label {
+                    color: $form-hover-label-font-color;
+                }
+            }
+
+            &[required]:valid,
+            &.is-valid {
+                background-color: $form-valid-input-background-color;
+                border-color: $form-valid-input-border-color;
+                color: $form-valid-input-font-color;
+
+                ~ .Form-label {
+                    color: $form-valid-label-font-color;
+                }
+            }
+
+            &[disabled] {
+                background-color: $form-disabled-input-background-color;
+                border-color: $form-disabled-input-border-color;
+                color: $form-disabled-input-font-color;
+                cursor: not-allowed;
+
+                ~ .Form-label {
+                    color: $form-disabled-label-font-color;
+                    cursor: not-allowed;
+                }
+            }
+        }
+
+        &-label {
+            color: $form-label-font-color;
+            cursor: text;
+            display: block;
+            font-family: $form-label-font-family;
+            font-size: $form-label-font-size;
+            font-weight: $form-label-font-weight;
+            line-height: $form-label-line-height;
+            padding-left: $form-label-offset;
+            text-transform: $form-label-transform;
+            transition-duration: $form-transition-speed;
+            transition-property: background-color, border-color, color, opacity, transform;
+        }
+
+        &-selectValue {
+            @extend .Form-input;
+            min-width: $form-select-min-width;
+            overflow: hidden;
+            padding-right: $form-select-dropdown-size * 2;
+            position: relative;
+            text-align: left;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &::before {
+                border: solid transparent;
+                border-top-color: $form-select-dropdown-color;
+                border-width: $form-select-dropdown-size ($form-select-dropdown-size * 0.6666666666) 0;
+                content: "";
+                display: block;
+                font-size: 0.5em;
+                height: 0;
+                margin-top: -$form-select-dropdown-size * 0.25;
+                position: absolute;
+                right: 1rem;
+                top: 50%;
+                transform: translateY(-40%);
+                width: 0;
+            }
+
+            &::after {
+                content: $non-breaking-space;
+            }
+
+            select:focus ~ &,
+            select:hover ~ & {
+                @extend .Form-input, :hover;
+            }
+        }
+
+        @if $form-centered-by-default {
+            &--uncenter {
+                align-self: flex-start;
+                margin-left: 0;
+                margin-right: 0;
+                max-width: none;
+            }
+        }
+        @else {
+            &--center {
+                align-self: center;
+                margin-left: auto;
+                margin-right: auto;
+                max-width: $form-max-width;
+            }
+        }
+
+        &--narrow {
+            max-width: $form-narrow-max-width;
+            @if not $form-centered-by-default {
+                align-self: center;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media #{$mq-small-up} {
+            &-group--inline {
+                align-items: center;
+                display: flex;
+
+                > .Form-input,
+                > .Form-label {
+                    flex-grow: 1;
+                }
+
+                > .Form-input {
+                    flex-basis: 350px;
+                }
+
+                > .Form-label {
+                    margin-right: 30px;
+                    text-align: right;
+                }
+            }
+        }
+
+        @media #{$mq-medium-up} {
+            &--col2 {
+
+                .Form-group[data-form-label-placeholder] {
+                    display: inline-block;
+                    margin-left: 3%;
+                    margin-right: 3%;
+                    vertical-align: top;
+                    width: 42%;
+                }
+            }
+
+            &--col3 {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+
+                > div {
+                    width: 100%;
+                }
+
+                > .Form-group {
+                    width: calc(50% - 0.75rem);
+                }
+
+                > .Form-group--checkbox,
+                > .Form-group--large,
+                > .Form-group--textarea,
+                > .Form-heading {
+                    width: 100%;
+                }
+            }
+
+            //&--md-horizontal {
+            //    @include form-horizontal;
+            //}
+        }
+
+        @media #{$mq-large-up} {
+
+            &--col2 {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+
+                > div {
+                    width: 100%;
+                }
+
+                > .Form-group {
+                    width: calc(50% - 0.75rem);
+                }
+            }
+
+            &--col3 {
+
+                > .Form-group {
+                    width: calc(33.333% - 0.75rem);
+                }
+
+                > .Form-group--medium {
+                    width: calc(66.666% - 0.375rem);
+                }
+            }
+
+            &--col2,
+            &--col3 {
+
+                > .Form-group--checkbox,
+                > .Form-group--large,
+                > .Form-group--textarea,
+                > .Form-heading {
+                    width: 100%;
+                }
+            }
+
+            //&--lg-horizontal {
+            //    @include form-horizontal;
+            //}
+        }
+    }
+}
